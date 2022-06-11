@@ -1,0 +1,48 @@
+ <Grid>
+
+        <ListView x:Name="listviewUsers"  
+                  Margin="10,10,10,10">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" 
+                      Header="Name" Width="100"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Surname}" 
+                      Header="Surname" Width="100"/>
+                    <GridViewColumn Header="Image" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Path=Image}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+    
+    
+      static DataTable ExecuteSql(string sql)
+        {
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection("server=ASUS;Trusted_Connection=Yes;DataBase=Test;");
+            using (conn)
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                SqlDataReader read = cmd.ExecuteReader();
+
+                using (read)
+                {
+                    dt.Load(read);
+                }
+            }
+
+            return dt;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            DataTable dt = ExecuteSql("SELECT * FROM Users");
+            listviewUsers.ItemsSource = dt.DefaultView;
+        }
+    }
